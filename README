@@ -1,8 +1,8 @@
 Exploring and Decoding Nikons Advanced Wireless Lighting protocol with Python
 
 Also my attempt to get rid of the proprietary Matlab for private things and
-replace it with a combination of Python, Numpy, Matplotlib and other intersting
-libraries.
+replace it with a combination of Python, Numpy, Matplotlib and other
+interesting libraries.
 
 Currently mostly experimental and probably not the best code since I'm just
 getting into Python. And since I'm mostly porting my old Matlab code for now I
