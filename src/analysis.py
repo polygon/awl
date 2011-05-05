@@ -23,6 +23,35 @@ def decodeRemoteSettings(chunk, rate=96000.0):
     # TODO: Probably error message if minimum distance is too large
     
     # Assume the group with smallest error
-    settings['group'] = dists.argmin() + 1
+    settings['channel'] = dists.argmin() + 1
+    
+    # Read intermediate, though not used here at the moment
+    inter_dist = np.power(params['intermediate'] - diffs[2:5], 2).sum()
+    
+    # TODO: Probably error message if distance is too large
+    
+    # Read group settings
+    settings['group'] = np.array([])
+    pos = 5
+    length = diffs.shape[0]
+    
+    while pos < (length - 1):
+        if length - pos == 2:
+            # Last presence pulse
+            # Calculate distance, though not used here at the moment
+            dist = np.power(params['grp_present'][0:2] - diffs[pos:pos+2], 2).sum()
+            settings['group'] = np.append(settings['group'], 1)
+            pos += 2
+        else:
+            # There is more than one group remaining
+            dist_present = np.power(params['grp_present'] - diffs[pos:pos+3], 2).sum()
+            dist_absent = np.power(params['grp_absent'] - diffs[pos], 2)
+            
+            if dist_present < dist_absent:
+                settings['group'] = np.append(settings['group'], 1)
+                pos += 3
+            else:
+                settings['group'] = np.append(settings['group'], 0)
+                pos += 1
     
     return settings
