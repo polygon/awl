@@ -50,12 +50,17 @@ def findChunks(data, offtime, threshold):
     return chunks
 
 def findTdiffs(data, offtime=2, threshold=0.7):
-    peaks = findChunks(data, offtime, threshold);
+    peaks = findChunks(data, offtime, threshold)
     tdiffs = [];
     for i in range(1, len(peaks)):
         tdiffs.append((peaks[i].start + (peaks[i].end - peaks[i].start) / 2.0) - \
                       (peaks[i-1].start + (peaks[i-1].end - peaks[i-1].start) / 2.0))
     return np.array(tdiffs)
+    
+def findPulses(data, offtime=2, threshold=0.7):
+    peaks = findChunks(data, offtime, threshold)
+    pulses = [(p.start + p.end) / 2.0 for p in peaks]
+    return np.array(pulses)
 
 def diffSig( s1, s2 ):
 # Will pad the shorter signal with zeros and gives
@@ -70,3 +75,49 @@ def diffSig( s1, s2 ):
         diff = abs(diff)
         
     return diff
+    
+def groupPulses(pulses, tol=10):
+    # Generate the data bins
+    bins = []
+    
+    for pg in pulses:
+        for pulse in pg:
+            if not bins: # First bin
+                bins.append(Bunch(pos=pulse,entries=[pulse]))
+            else:
+                binidx = np.nonzero(np.abs(np.array([b.pos for b in bins]) \
+                                    - pulse) < tol)[0]
+                if not len(binidx):
+                    bins.append(Bunch(pos=pulse,entries=[pulse]))
+                else:
+                    bins[binidx[0]].entries.append(pulse)
+                    
+    # Generate average bin positions
+    for b in bins:
+        b.average = np.mean(b.entries)
+        
+    # Assign pulses to bins
+    binpos = np.array([b.pos for b in bins])
+    grouped = [np.zeros(len(p)) for p in pulses]
+    
+    for i, pg in enumerate(pulses):
+        for j, pulse in enumerate(pg):
+            # Find output pit
+            grouped[i][j] = bins[np.argmin(np.abs(binpos - pulse))].average
+            
+    return grouped
+    
+
+#  % Generate output pulse positions
+#  posout = posin;
+#  for i=1:N
+#    for j=1:length(posin{i});
+#      % Find output pit
+#      for k=1:length(pits)
+#        if abs(pits(k).pos - posin{i}(j)) < tol
+#          posout{i}(j) = pits(k).avgpos;
+#          break;
+#        end
+#      end
+#    end
+#  end
