@@ -20,9 +20,9 @@ def annotateDist(x0, x1, y, text=None):
         pl.text(x0 + (x1 - x0) / 2.0, y+0.02, text, 
                 horizontalalignment='center', fontsize=10)
 
-def plotRemoteSettings(chunk, rate=96000.0):
-    # Decode remote settings
-    settings = an.decodeRemoteSettings(chunk, rate)
+def plotInitialization(chunk, rate=96000.0):
+    # Decode the initialization chunk
+    settings = an.decodeInitialization(chunk, rate)
     data = np.array(chunk)
     pulses = 1000000.0 * tools.findPulses(chunk) / rate
     data = data / np.max(data)
@@ -57,4 +57,4 @@ def plotRemoteSettings(chunk, rate=96000.0):
 data = al.wavread("Samples/Ch1_G1_M128_G3_M128_NoMaster_NoFlashPresent_sb900.wav")[0][:,0]
 c = tools.findChunks(data, 100, 0.1)
 chunk = data[c[0].start:c[0].end]
-plotRemoteSettings(chunk)
+plotInitialization(chunk)

@@ -9,11 +9,11 @@ import analysistools as at
 import numpy as np
 import pdb
 
-def decodeRemoteSettings(chunk, rate=96000.0):
+def decodeInitialization(chunk, rate=96000.0):
     settings = {}
     diffs = at.findTdiffs(chunk) / (rate / 1000000.0)
     
-    params = np.load("remote_settings_params.npz")
+    params = np.load("initialization_params.npz")
     
     # Decode channel
     # Calculate square error of received time distances with reference
