@@ -40,7 +40,7 @@ def decodeInitialization(chunk, rate=96000.0):
             # Last presence pulse
             # Calculate distance, though not used here at the moment
             dist = np.power(params['grp_present'][0:2] - diffs[pos:pos+2], 2).sum()
-            settings['group'] = np.append(settings['group'], 1)
+            settings['group'] = np.append(settings['group'], True)
             pos += 2
         else:
             # There is more than one group remaining
@@ -48,10 +48,10 @@ def decodeInitialization(chunk, rate=96000.0):
             dist_absent = np.power(params['grp_absent'] - diffs[pos], 2)
             
             if dist_present < dist_absent:
-                settings['group'] = np.append(settings['group'], 1)
+                settings['group'] = np.append(settings['group'], True)
                 pos += 3
             else:
-                settings['group'] = np.append(settings['group'], 0)
+                settings['group'] = np.append(settings['group'], False)
                 pos += 1
     
     return settings
