@@ -15,7 +15,7 @@ def plotChunks(data, chunks=None):
     # If no chunks are given, will search for chunks
     
     if chunks == None:
-        chunks = at.findChunks(data, 100, 0.3)
+        chunks = at.findChunks(data, 1000.0, 0.3)
 
     csig = np.zeros(chunks[-1].end)
     for chunk in chunks:

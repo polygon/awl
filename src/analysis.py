@@ -11,9 +11,9 @@ import pdb
 
 def decodeInitialization(chunk, rate=96000.0):
     settings = {}
-    diffs = at.findTdiffs(chunk) / (rate / 1000000.0)
+    diffs = at.findTdiffs(chunk, rate=rate)
     
-    params = np.load("initialization_params.npz")
+    params = np.load("initialization_settings.npz")
     
     # Decode channel
     # Calculate square error of received time distances with reference

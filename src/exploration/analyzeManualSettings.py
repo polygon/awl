@@ -57,7 +57,7 @@ wavs.append(tools.normalize(al.wavread("Samples/Ch1_G1_TTL_0_G2_M32_G3_M32_NoMas
 N = len(wavs);
 
 # Extract the second chunk of every data block
-chunks = [tools.findChunks(wav, 250, 0.1) for wav in wavs]
+chunks = [tools.findChunks(wav, 2500.0, 0.1) for wav in wavs]
 bl2 = [wav[c[1].start:c[1].end] for (wav, c) in zip(wavs, chunks)]
 td2 = [tools.findTdiffs(bl) for bl in bl2]
 pl2 = [tools.findPulses(bl) for bl in bl2]

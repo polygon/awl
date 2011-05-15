@@ -15,13 +15,14 @@ class Bunch:
     def __str__(self):
         return self.__dict__.__str__()
 
-def findChunks(data, offtime, threshold):
+def findChunks(data, offtime, threshold, rate=96000.0):
     state = 0
     ch_start = 0
     ch_end = 0
     pos = 0
     chunks = []
     below = 0
+    offsamps = np.round(offtime * rate / 1000000.0)
 
     for pos, val in enumerate(data):
         # Currently looking for the start of a chunk
@@ -39,7 +40,7 @@ def findChunks(data, offtime, threshold):
                 ch_end = pos
             else:
                 below = below + 1
-                if below >= offtime: # Chunk ends
+                if below >= offsamps: # Chunk ends
                     chunks.append(Bunch(start=ch_start, end=ch_end, \
                                         length=ch_end-ch_start))
                     state = 0
@@ -49,18 +50,18 @@ def findChunks(data, offtime, threshold):
                             length=ch_end-ch_start))
     return chunks
 
-def findTdiffs(data, offtime=2, threshold=0.7):
-    peaks = findChunks(data, offtime, threshold)
+def findTdiffs(data, offtime=20, threshold=0.7, rate=96000.0):
+    peaks = findChunks(data, offtime, threshold, rate=rate)
     tdiffs = [];
     for i in range(1, len(peaks)):
         tdiffs.append((peaks[i].start + (peaks[i].end - peaks[i].start) / 2.0) - \
                       (peaks[i-1].start + (peaks[i-1].end - peaks[i-1].start) / 2.0))
-    return np.array(tdiffs)
+    return np.array(tdiffs) * 1000000.0 / rate
     
-def findPulses(data, offtime=2, threshold=0.7):
-    peaks = findChunks(data, offtime, threshold)
+def findPulses(data, offtime=20, threshold=0.7, rate=96000.0):
+    peaks = findChunks(data, offtime, threshold, rate=rate)
     pulses = [(p.start + p.end) / 2.0 for p in peaks]
-    return np.array(pulses)
+    return np.array(pulses) * 1000000.0 / rate
 
 def diffSig( s1, s2 ):
 # Will pad the shorter signal with zeros and gives
@@ -76,9 +77,10 @@ def diffSig( s1, s2 ):
         
     return diff
     
-def groupPulses(pulses, tol=10):
+def groupPulses(pulses, tol=100, rate=96000.0):
     # Generate the data bins
     bins = []
+    tolsamps = np.round(tol * rate / 1000000.0)
     
     for pg in pulses:
         for pulse in pg:

@@ -25,7 +25,7 @@ chunks = [];
 bl1 = [];
 td1 = [];
 for wav in wavs:
-    nc = tools.findChunks(wav, 100, 0.1)
+    nc = tools.findChunks(wav, 1000.0, 0.1)
     chunks.append(nc)
     bl1.append(wav[nc[0].start:nc[0].end]);
     td1.append(tools.findTdiffs(bl1[-1]));
@@ -35,13 +35,13 @@ tdb1 = 0.0
 tdb2 = 0.0
 tdb3 = 0.0
 for td in td1:
-    tdb1 = tdb1 + td[2];
-    tdb2 = tdb2 + td[3];
-    tdb3 = tdb3 + td[4];
+    tdb1 = tdb1 + td[2]
+    tdb2 = tdb2 + td[3]
+    tdb3 = tdb3 + td[4]
 
-tdb1 = ((tdb1 / N) / 96000.0) * 1000000.0;
-tdb2 = ((tdb2 / N) / 96000.0) * 1000000.0;
-tdb3 = ((tdb3 / N) / 96000.0) * 1000000.0;
+tdb1 = (tdb1 / N);
+tdb2 = (tdb2 / N);
+tdb3 = (tdb3 / N);
 
 # Calculate average tdiffs for Group Present pulse information
 tgp1 = td1[0][5] + \
@@ -65,9 +65,9 @@ tgp3 = td1[3][7] + \
        td1[5][8] + \
        td1[6][7] + td1[6][10]
      
-tgp1 = ((tgp1 / 12.0) / 96000.0) * 1000000.0
-tgp2 = ((tgp2 / 12.0) / 96000.0) * 1000000.0
-tgp3 = ((tgp3 / 5.0) / 96000.0) * 1000000.0
+tgp1 = (tgp1 / 12.0)
+tgp2 = (tgp2 / 12.0)
+tgp3 = (tgp3 / 5.0)
 
 # Calculate average tdiffs for Group Absent pulse information
 tga = td1[1][5] + \
