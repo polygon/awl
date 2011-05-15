@@ -107,6 +107,8 @@ def groupPulses(pulses, tol=10):
             
     return grouped
     
+def normalize(data):
+    return data / np.max(data)
 
 #  % Generate output pulse positions
 #  posout = posin;
